@@ -10,14 +10,14 @@ El brazo gira alrededor del pivote. Se mide el ángulo $\theta$ desde la horizon
 positivo hacia arriba (como en el diagrama), y el empuje $F$ actúa en la punta,
 perpendicular al brazo, a distancia $R$.
 
-| símbolo | significado | valor medido |
-|---|---|---|
-| $R$ | pivote → punto de aplicación del empuje | $145\ \text{mm} = 0.145\ \text{m}$ |
-| $d$ | pivote → centro de masa | $32.9\ \text{mm}$ (solo la placa) |
-| $I$ | momento de inercia respecto al pivote | por medir |
-| $m$ | masa del conjunto brazo + motor + hélice | por medir |
+| símbolo  | significado                              | valor medido                       |
+| -------- | ---------------------------------------- | ---------------------------------- |
+| $R$      | pivote → punto de aplicación del empuje  | $145\ \text{mm} = 0.145\ \text{m}$ |
+| $d$      | pivote → centro de masa                  | $32.9\ \text{mm}$ (solo la placa)  |
+| $I$      | momento de inercia respecto al pivote    | por medir                          |
+| $m$      | masa del conjunto brazo + motor + hélice | por medir                          |
 | $b$ | fricción viscosa | por identificar |
-| $\tau_c$ | fricción de Coulomb | por identificar |
+|          |                                          |                                    |
 
 ## 2. Suma de torques
 
@@ -34,26 +34,23 @@ $$
 \tau_F = F R .
 $$
 
-La fricción se modela con dos términos, uno viscoso y uno de Coulomb (constante,
-opuesto al movimiento):
+La fricción se toma solo viscosa, proporcional a la velocidad angular:
 
 $$
-\tau_f = -b\,\dot\theta - \tau_c\,\operatorname{sgn}(\dot\theta).
+\tau_f = -b\,\dot\theta .
 $$
 
 Sumando, la ecuación de movimiento es
 
 $$
-\boxed{\; I\,\ddot\theta = F R - m g d \cos\theta - b\,\dot\theta
-- \tau_c\,\operatorname{sgn}(\dot\theta) \;}
+\boxed{\; I\,\ddot\theta = F R - m g d \cos\theta - b\,\dot\theta \;}
 $$
 
 ## 3. Por qué todavía no se puede aplicar Laplace
 
-La ecuación anterior es no lineal por dos razones: $\cos\theta$ depende de $\theta$ y
-$\operatorname{sgn}(\dot\theta)$ es discontinuo. Laplace solo trabaja con sistemas
-lineales de coeficientes constantes, así que hay que linealizar alrededor de un punto
-de operación.
+La ecuación anterior es no lineal porque $\cos\theta$ depende de $\theta$. Laplace
+solo trabaja con sistemas lineales de coeficientes constantes, así que hay que
+linealizar alrededor de un punto de operación.
 
 ## 4. Equilibrio
 
@@ -85,14 +82,14 @@ Reemplazando y usando la condición de equilibrio,
 
 $$
 I\ddot\delta = (F_0 + \Delta F)R - m g d(\cos\theta_0 - \operatorname{sen}\theta_0\,\delta)
-- b\dot\delta - \tau_c\operatorname{sgn}(\dot\delta),
+- b\dot\delta ,
 $$
 
 los términos $F_0R$ y $m g d\cos\theta_0$ se cancelan y queda
 
 $$
 \boxed{\; I\,\ddot\delta + b\,\dot\delta - \underbrace{m g d\operatorname{sen}\theta_0}_{a}\,\delta
-= R\,\Delta F - \tau_c\operatorname{sgn}(\dot\delta) \;}
+= R\,\Delta F \;}
 $$
 
 El signo menos en el término de rigidez es la clave física: si el brazo está por
@@ -100,8 +97,7 @@ encima de la horizontal ($\theta_0>0$), la gravedad **desestabiliza**, y $a>0$.
 
 ## 6. Transformada de Laplace
 
-Se desprecia por ahora la fricción de Coulomb (ver sección 9) y se toman condiciones
-iniciales nulas, $\delta(0)=\dot\delta(0)=0$:
+Con condiciones iniciales nulas, $\delta(0)=\dot\delta(0)=0$:
 
 $$
 I s^2 \Delta(s) + b s \Delta(s) - a \Delta(s) = R\,U(s),
@@ -168,23 +164,17 @@ Como el polo dominante es positivo, $\cosh$ y $\operatorname{senh}$ dominan: la
 respuesta al escalón **diverge exponencialmente**. Eso es el comportamiento del
 péndulo sin control, y es la razón por la que necesita realimentación.
 
-## 9. Qué hacer con la fricción de Coulomb
+## 9. Sobre la fricción
 
-$\operatorname{sgn}(\dot\delta)$ no tiene transformada de Laplace limpia porque no es
-lineal, así que no entra en $G(s)$. Tres salidas prácticas:
+En este modelo la fricción es **una sola línea**: el término viscoso $b\dot\theta$.
+El modelo de Coulomb ($\tau_c\operatorname{sgn}\dot\theta$) no se usa: es no lineal,
+no tiene transformada de Laplace limpia y complica la identificación, así que queda
+fuera del planteamiento.
 
-1. **Tratarla como perturbación** que actúa en la entrada, con $\tau_c$ conocido: en
-   el lazo se comporta como un escalón de torque que el integrador del controlador
-   debe rechazar.
-2. **Ignorarla fuera de la zona muerta**: cuando el brazo ya se mueve, $\tau_c$ es
-   constante y solo corre el punto de operación; por eso la ganancia del actuador se
-   mide en movimiento y no cerca del reposo.
-3. **Función descriptora**: para análisis por frecuencia, reemplazar el signo por su
-   aproximación de primer armónico.
-
-En dinámica, el efecto visible es el decaimiento casi lineal de la amplitud en la
-oscilación libre (a diferencia del decaimiento exponencial del término viscoso); de
-ahí se identifican $b$ y $\tau_c$ a la vez.
+La consecuencia práctica es que el modelo lineal sobreestima un poco el movimiento
+cerca del reposo, donde el rozamiento seco frena más de lo que predice $b\dot\theta$.
+Si más adelante hace falta, se recupera como perturbación, pero no forma parte de
+$G(s)$.
 
 ## 10. El caso $\theta_0 = 0$
 
@@ -205,5 +195,5 @@ produce aceleración. Es un caso aparte y conviene tratarlo separado al identifi
 | $I$ | masa total y geometría (o péndulo físico: $T = 2\pi\sqrt{I/mgd}$) |
 | $m$, $d$ | báscula y centro de masa del conjunto armado |
 | $R$ | cota del modelo: 145 mm |
-| $b$, $\tau_c$ | decaimiento de la oscilación libre |
+| $b$ | decaimiento de la oscilación libre |
 | $F(u)$ | barrido de duty en equilibrio |
