@@ -1,3 +1,5 @@
 .pio/
 *.o
 .vscode/
+__pycache__/
+*.FCBak
