@@ -26,6 +26,7 @@ $m = 31.7$ g, $d = 24.5$ mm, $I = 9.45\times10^{-5}$ kg·m², $R = 145$ mm.
 ## Notas
 
 - [[Desarrollo matematico]]
+- [[Analisis de resultados]]
 
 ## Archivos del repo
 

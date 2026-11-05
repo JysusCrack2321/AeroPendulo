@@ -79,7 +79,11 @@ def picos(t: np.ndarray, y: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         dist = max(3, int(0.25 / (fdom * np.median(np.diff(t)))))
     except Exception:
         dist = 3
-    idx, _ = find_peaks(y, distance=dist, prominence=max(1e-9, 0.05 * np.ptp(y)))
+    # maximos y minimos: el doble de puntos para ajustar la envolvente
+    prom = max(1e-9, 0.04 * np.ptp(y))
+    i1, _ = find_peaks(y, distance=dist, prominence=prom)
+    i2, _ = find_peaks(-y, distance=dist, prominence=prom)
+    idx = np.sort(np.concatenate([i1, i2]))
     return t[idx], y[idx]
 
 
@@ -90,11 +94,22 @@ def main() -> None:
     ap.add_argument("--inercia", type=float, default=INERCIA, help="kg·m2")
     ap.add_argument("--masa", type=float, default=MASA, help="kg")
     ap.add_argument("--d", type=float, default=D_CM, help="kg... distancia CM-pivote en m")
+    ap.add_argument("--desde", type=float, default=None, help="segundo donde empieza el tramo util")
+    ap.add_argument("--hasta", type=float, default=None, help="segundo donde termina el tramo util")
     ap.add_argument("--guardar", type=Path, help="PNG de salida")
     args = ap.parse_args()
 
     t, y = cargar(args.archivo, args.columna)
     y = desenvolver(y)
+    if args.desde is not None or args.hasta is not None:
+        d = args.desde if args.desde is not None else t.min()
+        h = args.hasta if args.hasta is not None else t.max()
+        sel = (t >= d) & (t <= h)
+        if sel.sum() < 10:
+            raise SystemExit("el tramo seleccionado casi no tiene muestras")
+        t, y = t[sel], y[sel]
+        print(f"tramo util: {d:.2f} - {h:.2f} s  ({sel.sum()} muestras)")
+    t = t - t[0]          # tiempos relativos al inicio del tramo
     y = y - y.mean()
 
     tp, yp = picos(t, y)
@@ -114,8 +129,8 @@ def main() -> None:
     b = 2 * I * sigma
     wn = np.sqrt(m * G * d / I)
     zeta = b / (2 * np.sqrt(I * m * G * d))
-    periodos = np.diff(tp)
-    T_med = float(np.median(periodos))
+    # hay picos de ambos signos, asi que entre picos consecutivos hay medio periodo
+    T_med = float(2 * np.median(np.diff(tp)))
 
     print(f"archivo:      {args.archivo}")
     print(f"muestras:     {len(t)} en {t.max() - t.min():.2f} s")
