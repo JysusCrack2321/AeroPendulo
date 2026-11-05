@@ -27,6 +27,7 @@ $m = 31.7$ g, $d = 24.5$ mm, $I = 9.45\times10^{-5}$ kg·m², $R = 130.7$ mm (ce
 
 - [[Desarrollo matematico]]
 - [[Analisis de resultados]]
+- [[Como se calculo la inercia]]
 
 ## Archivos del repo
 
