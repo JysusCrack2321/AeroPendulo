@@ -5,3 +5,7 @@
 ![[cuerpo-libre.svg]]
 
 ![[centro-de-masa.svg]]
+
+## Notas
+
+- [[Desarrollo matematico]]
