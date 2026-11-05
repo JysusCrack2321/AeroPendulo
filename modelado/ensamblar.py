@@ -1,77 +1,94 @@
-"""Ensambla brazo + brida + motor en un FCStd editable.
+"""Ensambla brazo + brida + motor + MPU en un FCStd editable.
 
-Cada pieza queda como objeto independiente: mueve o rota su Placement en el panel
-de propiedades y vuelve a correr este script (o abre el .FCStd y edita a mano).
-El motor es un Part::Cylinder parametrico: puedes cambiar radio y altura.
+Cada pieza es un objeto independiente con su Placement: muevela en el panel de
+propiedades y vuelve a correr el script para recalcular masa e inercia.
+El motor es un Part::Cylinder parametrico (Radius / Height).
 """
 import FreeCAD, Part, math
 
 PLACA = "/home/jysusman/Proyectos/AeroPendulo/modelado/Estructura-Pendulo-3D.step"
 BRIDA = "/home/jysusman/Descargas/5mm Flange Coupling Connector.step"
+MPU = "/home/jysusman/Descargas/MPU6050 v2.step"
 SALIDA = "/home/jysusman/Proyectos/AeroPendulo/modelado/ensamble.FCStd"
 
-# --- parametros de montaje (editar aqui) ---
-PIV = (24.7, -89.3, 0.0)        # centro del buje del brazo = eje del pivote
-BRIDA_POS = (24.7, -89.3, 0.0)  # brida colgando bajo la cara inferior del brazo
-BRIDA_ROT_EJE = (1, 0, 0)       # girada 180 para que salga hacia abajo
-BRIDA_ROT_ANG = 180.0
-MOT_POS = (24.6, -220.0, 5.0)   # centro del motor
-MOT_R = 3.5                     # radio (mm)
-MOT_L = 16.0                    # largo (mm)
-MOT_EJE = (0, 1, 0)             # el cilindro nace en Z; se rota para tumbarlo
-MOT_ANG = 90.0
+# ---------------- parametros de montaje ----------------
+PIV = (24.7, -89.3, 0.0)          # eje del pivote (centro del buje)
+BRIDA_POS = (24.7, -89.3, 0.0)    # brida colgando bajo la cara inferior
+BRIDA_ROT_EJE, BRIDA_ROT_ANG = (1, 0, 0), 180.0
+MOT_POS = (24.6, -220.0, 5.0)     # centro del motor
+MOT_R, MOT_L = 3.5, 16.0
+MOT_EJE, MOT_ANG = (0, 1, 0), 90.0
+MPU_POS = (24.7, -122.2, 4.0)     # centro de la placa del MPU, sobre la cara superior
+MPU_ROT_EJE, MPU_ROT_ANG = (1, 0, 0), -90.0   # tumbada sobre el brazo
+MPU_MASA_G = 2.0                  # pesala y ajusta este numero
 
 placa = Part.Shape(); placa.read(PLACA)
 brida = Part.Shape(); brida.read(BRIDA)
+mpu = Part.Shape(); mpu.read(MPU)
+
+
+def colocar(forma, rot_eje, rot_ang, destino):
+    """rota y traslada para que el centro de la caja envolvente quede en destino"""
+    f = forma.copy()
+    f.transformShape(FreeCAD.Placement(FreeCAD.Vector(0, 0, 0),
+                                       FreeCAD.Rotation(FreeCAD.Vector(*rot_eje), rot_ang)).toMatrix())
+    bb = f.BoundBox
+    f.translate(FreeCAD.Vector(destino[0] - (bb.XMin + bb.XMax) / 2,
+                               destino[1] - (bb.YMin + bb.YMax) / 2,
+                               destino[2] - (bb.ZMin + bb.ZMax) / 2))
+    return f
+
+
+brida_pl = colocar(brida, BRIDA_ROT_EJE, BRIDA_ROT_ANG, BRIDA_POS)
+mpu_pl = colocar(mpu, MPU_ROT_EJE, MPU_ROT_ANG, MPU_POS)
 
 doc = FreeCAD.newDocument("aeropendulo")
-
 cont = doc.addObject("App::Part", "Aeropendulo")
 
 brazo = doc.addObject("Part::Feature", "Brazo")
 brazo.Shape = placa
-brazo.Placement = FreeCAD.Placement(FreeCAD.Vector(0, 0, 0), FreeCAD.Rotation())
 
 bri = doc.addObject("Part::Feature", "Brida")
-bri.Shape = brida
-bri.Placement = FreeCAD.Placement(
-    FreeCAD.Vector(*BRIDA_POS),
-    FreeCAD.Rotation(FreeCAD.Vector(*BRIDA_ROT_EJE), BRIDA_ROT_ANG))
+bri.Shape = brida_pl
 
 mot = doc.addObject("Part::Cylinder", "Motor")
-mot.Radius = MOT_R
-mot.Height = MOT_L
+mot.Radius, mot.Height = MOT_R, MOT_L
 mot.Placement = FreeCAD.Placement(
-    FreeCAD.Vector(MOT_POS[0] - MOT_L / 2 * math.cos(math.radians(0)), MOT_POS[1], MOT_POS[2]),
+    FreeCAD.Vector(MOT_POS[0] - MOT_L / 2, MOT_POS[1], MOT_POS[2]),
     FreeCAD.Rotation(FreeCAD.Vector(*MOT_EJE), MOT_ANG))
 
-cont.addObject(brazo)
-cont.addObject(bri)
-cont.addObject(mot)
+mpu_obj = doc.addObject("Part::Feature", "MPU")
+mpu_obj.Shape = mpu_pl
+
+for o in (brazo, bri, mot, mpu_obj):
+    cont.addObject(o)
 doc.recompute()
 doc.saveAs(SALIDA)
 
-# --- masas e inercia respecto al eje del pivote ---
+# ---------------- masa e inercia respecto al pivote ----------------
 RHOS = {"Brazo": 1.27e-6, "Brida": 7.85e-6}
 print("cuerpo   masa[g]  d_pivote[mm]  I_pivote[g·cm2]")
 tm = tmd = tI = 0.0
-for obj, rho in ((brazo, RHOS["Brazo"]), (bri, RHOS["Brida"]), (mot, None)):
+for obj in (brazo, bri, mot, mpu_obj):
     forma = obj.Shape
-    if rho is None:
-        m = 2.5e-3
-        Iz = 0.5 * m * (MOT_R * 1e-3) ** 2
-    else:
-        m = sum(s.Volume for s in forma.Solids) * rho
-        Iz = sum(s.MatrixOfInertia.A33 * rho * 1e-6 for s in forma.Solids)
     sols = forma.Solids
     vt = sum(s.Volume for s in sols)
-    c = FreeCAD.Vector(sum(s.CenterOfMass.x * s.Volume for s in sols) / vt,
-                       sum(s.CenterOfMass.y * s.Volume for s in sols) / vt, 0)
-    # ojo: el Shape ya lleva aplicado el Placement, el centroide viene en coords globales
-    d = math.hypot(c.x - PIV[0], c.y - PIV[1]) / 1000.0
+    cm = FreeCAD.Vector(sum(s.CenterOfMass.x * s.Volume for s in sols) / vt,
+                        sum(s.CenterOfMass.y * s.Volume for s in sols) / vt, 0)
+    if obj.Name == "Motor":
+        m = 2.5e-3
+        Iz = 0.5 * m * (MOT_R * 1e-3) ** 2
+    elif obj.Name == "MPU":
+        m = MPU_MASA_G * 1e-3
+        Iz = m * (0.008 ** 2)          # despreciable, solo por completitud
+    else:
+        m = vt * RHOS[obj.Name]
+        Iz = sum(s.MatrixOfInertia.A33 * RHOS[obj.Name] * 1e-6 for s in sols)
+    d = math.hypot(cm.x - PIV[0], cm.y - PIV[1]) / 1000.0
     Ip = Iz + m * d ** 2
     tm += m; tmd += m * d; tI += Ip
     print("%-8s %7.2f %12.2f %14.0f" % (obj.Label, m * 1e3, d * 1e3, Ip * 1e7))
+
 print("%-8s %7.2f %12.2f %14.0f" % ("TOTAL", tm * 1e3, tmd / tm * 1e3, tI * 1e7))
 print("I = %.3e kg·m2 ; m·d = %.1f g·mm" % (tI, tmd * 1e6))
 print("guardado", SALIDA)
