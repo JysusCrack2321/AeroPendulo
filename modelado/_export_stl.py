@@ -6,7 +6,9 @@ PIV = (24.7, -89.3, 0.0)
 MOT = (24.6, -220.0, 5.0)
 
 placa = Part.Shape(); placa.read(PLACA)
-brida = Part.Shape(); brida.read(BRIDA); brida.translate(FreeCAD.Vector(PIV[0], PIV[1], 10.0))
+brida = Part.Shape(); brida.read(BRIDA)
+pl_brida = FreeCAD.Placement(FreeCAD.Vector(24.7, -89.3, 0.0), FreeCAD.Rotation(FreeCAD.Vector(1, 0, 0), 180))
+brida.transformShape(pl_brida.toMatrix())
 motor = Part.makeCylinder(3.5, 16.0)
 motor.Placement = FreeCAD.Placement(FreeCAD.Vector(MOT[0] - 8.0, MOT[1], MOT[2]),
                                     FreeCAD.Rotation(FreeCAD.Vector(0, 1, 0), 90))

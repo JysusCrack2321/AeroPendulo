@@ -12,9 +12,9 @@ SALIDA = "/home/jysusman/Proyectos/AeroPendulo/modelado/ensamble.FCStd"
 
 # --- parametros de montaje (editar aqui) ---
 PIV = (24.7, -89.3, 0.0)        # centro del buje del brazo = eje del pivote
-BRIDA_POS = (24.7, -89.3, 10.0) # brida apoyada en la cara superior del buje
-BRIDA_ROT_EJE = (0, 0, 1)       # eje de giro de la brida
-BRIDA_ROT_ANG = 0.0
+BRIDA_POS = (24.7, -89.3, 0.0)  # brida colgando bajo la cara inferior del brazo
+BRIDA_ROT_EJE = (1, 0, 0)       # girada 180 para que salga hacia abajo
+BRIDA_ROT_ANG = 180.0
 MOT_POS = (24.6, -220.0, 5.0)   # centro del motor
 MOT_R = 3.5                     # radio (mm)
 MOT_L = 16.0                    # largo (mm)
