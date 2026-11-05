@@ -6,7 +6,7 @@ MPU = "/home/jysusman/Descargas/MPU6050 v2.step"
 
 PIV = (24.7, -89.3, 0.0)
 MOT = (24.6, -220.0, 5.0)
-MPU_POS = (24.7, -122.2, 4.0)
+MPU_POS = (24.7, -89.3, -13.0)
 
 
 def colocar(forma, rot_eje, rot_ang, destino):

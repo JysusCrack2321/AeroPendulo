@@ -18,7 +18,7 @@ BRIDA_ROT_EJE, BRIDA_ROT_ANG = (1, 0, 0), 180.0
 MOT_POS = (24.6, -220.0, 5.0)     # centro del motor
 MOT_R, MOT_L = 3.5, 16.0
 MOT_EJE, MOT_ANG = (0, 1, 0), 90.0
-MPU_POS = (24.7, -122.2, 4.0)     # centro de la placa del MPU, sobre la cara superior
+MPU_POS = (24.7, -89.3, -13.0)   # MPU atornillado sobre la cara exterior de la brida
 MPU_ROT_EJE, MPU_ROT_ANG = (1, 0, 0), -90.0   # tumbada sobre el brazo
 MPU_MASA_G = 2.0                  # pesala y ajusta este numero
 
