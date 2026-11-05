@@ -18,7 +18,7 @@ BRIDA_ROT_EJE, BRIDA_ROT_ANG = (1, 0, 0), 180.0
 MOT_POS = (24.6, -220.0, 5.0)     # centro del motor
 MOT_R, MOT_L = 3.5, 16.0
 MOT_EJE, MOT_ANG = (0, 1, 0), 90.0
-MPU_POS = (24.7, -89.3, -13.0)   # MPU atornillado sobre la cara exterior de la brida
+MPU_POS = (24.7, -89.3, -11.95)  # MPU pegado a la cara exterior de la brida
 MPU_ROT_EJE, MPU_ROT_ANG = (1, 0, 0), -90.0   # tumbada sobre el brazo
 MPU_MASA_G = 2.0                  # pesala y ajusta este numero
 
@@ -27,20 +27,20 @@ brida = Part.Shape(); brida.read(BRIDA)
 mpu = Part.Shape(); mpu.read(MPU)
 
 
-def colocar(forma, rot_eje, rot_ang, destino):
-    """rota y traslada para que el centro de la caja envolvente quede en destino"""
+def colocar(forma, rot_eje, rot_ang, destino, anclaje="centro"):
+    """rota y traslada. anclaje='centro' centra la caja; 'arriba' apoya la cara superior"""
     f = forma.copy()
     f.transformShape(FreeCAD.Placement(FreeCAD.Vector(0, 0, 0),
                                        FreeCAD.Rotation(FreeCAD.Vector(*rot_eje), rot_ang)).toMatrix())
     bb = f.BoundBox
+    dz = destino[2] - ((bb.ZMin + bb.ZMax) / 2 if anclaje == "centro" else bb.ZMax)
     f.translate(FreeCAD.Vector(destino[0] - (bb.XMin + bb.XMax) / 2,
-                               destino[1] - (bb.YMin + bb.YMax) / 2,
-                               destino[2] - (bb.ZMin + bb.ZMax) / 2))
+                               destino[1] - (bb.YMin + bb.YMax) / 2, dz))
     return f
 
 
-brida_pl = colocar(brida, BRIDA_ROT_EJE, BRIDA_ROT_ANG, BRIDA_POS)
-mpu_pl = colocar(mpu, MPU_ROT_EJE, MPU_ROT_ANG, MPU_POS)
+brida_pl = colocar(brida, BRIDA_ROT_EJE, BRIDA_ROT_ANG, BRIDA_POS, "arriba")
+mpu_pl = colocar(mpu, MPU_ROT_EJE, MPU_ROT_ANG, MPU_POS, "arriba")
 
 doc = FreeCAD.newDocument("aeropendulo")
 cont = doc.addObject("App::Part", "Aeropendulo")

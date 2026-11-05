@@ -6,17 +6,17 @@ MPU = "/home/jysusman/Descargas/MPU6050 v2.step"
 
 PIV = (24.7, -89.3, 0.0)
 MOT = (24.6, -220.0, 5.0)
-MPU_POS = (24.7, -89.3, -13.0)
+MPU_POS = (24.7, -89.3, -11.95)
 
 
-def colocar(forma, rot_eje, rot_ang, destino):
+def colocar(forma, rot_eje, rot_ang, destino, anclaje="centro"):
     f = forma.copy()
     f.transformShape(FreeCAD.Placement(FreeCAD.Vector(0, 0, 0),
                                        FreeCAD.Rotation(FreeCAD.Vector(*rot_eje), rot_ang)).toMatrix())
     bb = f.BoundBox
+    dz = destino[2] - ((bb.ZMin + bb.ZMax) / 2 if anclaje == "centro" else bb.ZMax)
     f.translate(FreeCAD.Vector(destino[0] - (bb.XMin + bb.XMax) / 2,
-                               destino[1] - (bb.YMin + bb.YMax) / 2,
-                               destino[2] - (bb.ZMin + bb.ZMax) / 2))
+                               destino[1] - (bb.YMin + bb.YMax) / 2, dz))
     return f
 
 
@@ -24,8 +24,8 @@ placa = Part.Shape(); placa.read(PLACA)
 brida = Part.Shape(); brida.read(BRIDA)
 mpu = Part.Shape(); mpu.read(MPU)
 
-brida_pl = colocar(brida, (1, 0, 0), 180.0, (24.7, -89.3, 0.0))
-mpu_pl = colocar(mpu, (1, 0, 0), -90.0, MPU_POS)
+brida_pl = colocar(brida, (1, 0, 0), 180.0, (24.7, -89.3, 0.0), "arriba")
+mpu_pl = colocar(mpu, (1, 0, 0), -90.0, MPU_POS, "arriba")
 
 motor = Part.makeCylinder(3.5, 16.0)
 motor.Placement = FreeCAD.Placement(FreeCAD.Vector(MOT[0] - 8.0, MOT[1], MOT[2]),
