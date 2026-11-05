@@ -47,6 +47,29 @@ def colocar(forma, rot_eje, rot_ang, destino, anclaje="centro"):
 brida_pl = colocar(brida, BRIDA_ROT_EJE, BRIDA_ROT_ANG, BRIDA_POS, "arriba")
 mpu_pl = colocar(mpu, MPU_ROT_EJE, MPU_ROT_ANG, MPU_POS, "abajo")
 
+def tornillo(x, y, z_cabeza, largo=10.0, d=3.0, cabe_d=5.5, cabe_h=2.0):
+    """M3 simplificado: vastago + cabeza, cabeza apoyada en z_cabeza y vastago hacia abajo"""
+    vastago = Part.makeCylinder(d / 2, largo, FreeCAD.Vector(x, y, z_cabeza - largo))
+    cabeza = Part.makeCylinder(cabe_d / 2, cabe_h, FreeCAD.Vector(x, y, z_cabeza))
+    return vastago.fuse(cabeza)
+
+
+# agujeros del MPU ya colocado (verticales, r ~1.5)
+agujeros_mpu = set()
+for f in mpu_pl.Faces:
+    if f.Surface.__class__.__name__ == "Cylinder" and 1.3 <= f.Surface.Radius <= 1.7 \
+            and abs(f.Surface.Axis.z) > 0.9:
+        c = f.Surface.Center
+        agujeros_mpu.add((round(c.x, 2), round(c.y, 2)))
+agujeros_mpu = sorted(agujeros_mpu)
+print("agujeros MPU:", agujeros_mpu)
+
+tornillos = []
+for (x, y) in agujeros_mpu:                       # 2 tornillos MPU -> brazo
+    tornillos.append(tornillo(x, y, MPU_POS[2] + 2.0))
+for (x, y) in ((16.7, -89.4), (32.7, -89.4)):     # 2 tornillos brazo -> brida
+    tornillos.append(tornillo(x, y, 4.0))
+
 doc = FreeCAD.newDocument("aeropendulo")
 cont = doc.addObject("App::Part", "Aeropendulo")
 
@@ -65,7 +88,10 @@ mot.Placement = FreeCAD.Placement(
 mpu_obj = doc.addObject("Part::Feature", "MPU")
 mpu_obj.Shape = mpu_pl
 
-for o in (brazo, bri, mot, mpu_obj):
+tor = doc.addObject("Part::Feature", "Tornillos")
+tor.Shape = Part.makeCompound(tornillos)
+
+for o in (brazo, bri, mot, mpu_obj, tor):
     cont.addObject(o)
 doc.recompute()
 doc.saveAs(SALIDA)
@@ -74,7 +100,7 @@ doc.saveAs(SALIDA)
 RHOS = {"Brazo": 1.27e-6, "Brida": 7.85e-6}
 print("cuerpo   masa[g]  d_pivote[mm]  I_pivote[g·cm2]")
 tm = tmd = tI = 0.0
-for obj in (brazo, bri, mot, mpu_obj):
+for obj in (brazo, bri, mot, mpu_obj, tor):
     forma = obj.Shape
     sols = forma.Solids
     vt = sum(s.Volume for s in sols)
@@ -83,6 +109,9 @@ for obj in (brazo, bri, mot, mpu_obj):
     if obj.Name == "Motor":
         m = 2.5e-3
         Iz = 0.5 * m * (MOT_R * 1e-3) ** 2
+    elif obj.Name == "Tornillos":
+        m = vt * 7.85e-6
+        Iz = sum(s.MatrixOfInertia.A33 * 7.85e-6 * 1e-6 for s in sols)
     elif obj.Name == "MPU":
         m = MPU_MASA_G * 1e-3
         Iz = m * (0.008 ** 2)          # despreciable, solo por completitud

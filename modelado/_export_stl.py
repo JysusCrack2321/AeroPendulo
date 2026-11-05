@@ -36,7 +36,24 @@ motor = Part.makeCylinder(3.5, 16.0)
 motor.Placement = FreeCAD.Placement(FreeCAD.Vector(MOT[0] - 8.0, MOT[1], MOT[2]),
                                     FreeCAD.Rotation(FreeCAD.Vector(0, 1, 0), 90))
 
-for nombre, forma in (("brazo", placa), ("brida", brida_pl), ("motor", motor), ("mpu", mpu_pl)):
+def tornillo(x, y, z_cabeza, largo=10.0, d=3.0, cabe_d=5.5, cabe_h=2.0):
+    vastago = Part.makeCylinder(d / 2, largo, FreeCAD.Vector(x, y, z_cabeza - largo))
+    cabeza = Part.makeCylinder(cabe_d / 2, cabe_h, FreeCAD.Vector(x, y, z_cabeza))
+    return vastago.fuse(cabeza)
+
+
+agujeros = set()
+for f in mpu_pl.Faces:
+    if f.Surface.__class__.__name__ == "Cylinder" and 1.3 <= f.Surface.Radius <= 1.7 \
+            and abs(f.Surface.Axis.z) > 0.9:
+        c = f.Surface.Center
+        agujeros.add((round(c.x, 2), round(c.y, 2)))
+
+tornillos = [tornillo(x, y, MPU_POS[2] + 2.0) for (x, y) in sorted(agujeros)]
+tornillos += [tornillo(x, y, 4.0) for (x, y) in ((16.7, -89.4), (32.7, -89.4))]
+
+for nombre, forma in (("brazo", placa), ("brida", brida_pl), ("motor", motor),
+                      ("mpu", mpu_pl), ("tornillos", Part.makeCompound(tornillos))):
     m = MeshPart.meshFromShape(Shape=forma, LinearDeflection=0.3, AngularDeflection=0.35)
     m.write("/tmp/ens_%s.stl" % nombre)
     print("stl", nombre, m.CountFacets)
