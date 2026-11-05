@@ -14,7 +14,7 @@ Primera identificación de la fricción con datos reales.
 Hasta el segundo 5 el brazo está sostenido con la mano; ahí se suelta desde unos
 75° y de ahí en adelante decae solo. Solo ese tramo sirve para identificar.
 
-![[decaimiento-20261105.png]]
+![[imagenes/decaimiento-20261105.png]]
 
 ## Resultados
 

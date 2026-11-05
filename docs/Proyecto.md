@@ -1,14 +1,14 @@
 # Proyecto: aeropéndulo
 
-![[planta.svg]]
+![[imagenes/planta.svg]]
 
-![[cuerpo-libre.svg]]
+![[imagenes/cuerpo-libre.svg]]
 
-![[centro-de-masa.svg]]
+![[imagenes/centro-de-masa.svg]]
 
 ## Ensamble
 
-![[ensamble.png]]
+![[imagenes/ensamble.png]]
 
 Análisis del conjunto (CAD + pesada):
 
@@ -21,7 +21,7 @@ Análisis del conjunto (CAD + pesada):
 | 4 tornillos M3 | 3.71 g      | 2.6 mm      |
 | **total**      | **31.72 g** | **24.5 mm** |
 
-$m = 31.7$ g, $d = 24.5$ mm, $I = 9.45\times10^{-5}$ kg·m², $R = 145$ mm.
+$m = 31.7$ g, $d = 24.5$ mm, $I = 9.45\times10^{-5}$ kg·m², $R = 130.7$ mm (centro del motor), $L = 145$ mm (punta de la placa).
 
 ## Notas
 

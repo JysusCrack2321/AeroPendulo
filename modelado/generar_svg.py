@@ -8,9 +8,13 @@ buje de D27 con barreno pasante y 4 tornillos M5 a 8 mm del centro, situado a
 import math, pathlib
 
 VAULT = pathlib.Path("/home/jysusman/My-obsidian-vault/Universidad 2026-2/Tecnicas de contro/proyecto")
+IMG = VAULT / "imagenes"
+IMG.mkdir(exist_ok=True)
 
 K = 1.50           # px por mm
-L_LARGO = 145.0    # pivote -> punta del motor
+L_LARGO = 145.0    # pivote -> punta de la placa
+R_MOTOR = 130.7    # pivote -> centro del motor (donde actua el empuje)
+D_CM = 24.5        # pivote -> centro de masa del conjunto armado
 L_CORTO = 55.0     # pivote -> extremo trasero
 ANCHO = 10.0
 BUJE_D = 27.0
@@ -110,7 +114,7 @@ def cuerpo_libre():
              % (etiqueta[0] + 2, etiqueta[1] + 4))
 
     # peso en el centro de masa
-    cx, cy = P(piv, 70.0, 0)
+    cx, cy = P(piv, D_CM, 0)
     o.append('  <circle cx="%.1f" cy="%.1f" r="4.4" fill="#2b8a3e"/>' % (cx, cy))
     o.append('  <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="#2b8a3e" stroke-width="2.6" marker-end="url(#ag)"/>'
              % (cx, cy + 4, cx, cy + 100))
@@ -118,8 +122,8 @@ def cuerpo_libre():
     o.append('  <text x="%.1f" y="%.1f" fill="#2b8a3e" font-size="11" text-anchor="end">CM</text>' % (cx - 8, cy - 7))
 
     # empuje perpendicular al brazo en la punta
-    tx, ty = P(piv, L_LARGO, 0)
-    fx, fy = P(piv, L_LARGO, -48)
+    tx, ty = P(piv, R_MOTOR, 0)
+    fx, fy = P(piv, R_MOTOR, -48)
     o.append('  <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="#e8590c" stroke-width="3.2" marker-end="url(#ao)"/>'
              % (tx, ty, fx, fy))
     o.append('  <text x="%.1f" y="%.1f" fill="#e8590c" font-size="15" font-style="italic">F</text>' % (fx - 20, fy + 2))
@@ -139,7 +143,7 @@ def cuerpo_libre():
              % (mx + 4, my - 7))
 
     o.append('</svg>')
-    (VAULT / "cuerpo-libre.svg").write_text("\n".join(o) + "\n", encoding="utf-8")
+    (IMG / "cuerpo-libre.svg").write_text("\n".join(o) + "\n", encoding="utf-8")
 
 
 def planta():
@@ -172,13 +176,13 @@ def planta():
     o.append('  <text x="%.0f" y="%.0f" fill="#1c7ed6" font-size="16" font-style="italic">&#952;</text>'
              % (etiqueta[0] + 2, etiqueta[1] + 4))
 
-    # motor + helice en la punta
-    tx, ty = P(piv, L_LARGO, 0)
+    # motor: eje PERPENDICULAR al brazo (D7 x 16), helice girando en el plano del brazo
+    tx, ty = P(piv, R_MOTOR, 0)
     o.append('  <g transform="rotate(%.1f, %.1f, %.1f)">' % (-THETA, tx, ty))
-    o.append('    <rect x="%.1f" y="%.1f" width="30" height="20" rx="3" fill="#ffe8cc" stroke="#e8590c" stroke-width="2"/>'
-             % (tx - 34, ty - 10))
-    o.append('    <ellipse cx="%.1f" cy="%.1f" rx="3.2" ry="22" fill="#ffa94d" fill-opacity="0.9" stroke="#e8590c" stroke-width="1.4"/>'
-             % (tx + 5, ty))
+    o.append('    <rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" rx="2" fill="#ffe8cc" stroke="#e8590c" stroke-width="2"/>'
+             % (tx - 7 * K / 2, ty - 16 * K / 2, 7 * K, 16 * K))
+    o.append('    <ellipse cx="%.1f" cy="%.1f" rx="%.1f" ry="%.1f" fill="#ffa94d" fill-opacity="0.35" stroke="#e8590c" stroke-width="1.2"/>'
+             % (tx, ty, 26 * K, 3.2 * K))
     o.append('  </g>')
     o.append('  <circle cx="%.1f" cy="%.1f" r="3.4" fill="#e8590c"/>' % (tx, ty))
 
@@ -189,17 +193,18 @@ def planta():
              % (ox, oy, fx, fy))
     o.append('  <text x="%.1f" y="%.1f" fill="#e8590c" font-size="15" font-style="italic">F</text>' % (fx - 18, fy + 2))
     o.append('  <text x="%.1f" y="%.1f" fill="#e8590c" font-size="11" text-anchor="end">empuje</text>' % (fx - 22, fy + 16))
-    o.append('  <text x="%.1f" y="%.1f" fill="#e8590c" font-size="12">motor + helice</text>' % (ox + 12, oy + 22))
+    o.append('  <text x="%.1f" y="%.1f" fill="#e8590c" font-size="12">motor (eje perpendicular) + helice</text>' % (ox + 16, oy + 22))
 
     o.append('</svg>')
-    (VAULT / "planta.svg").write_text("\n".join(o) + "\n", encoding="utf-8")
+    (IMG / "planta.svg").write_text("\n".join(o) + "\n", encoding="utf-8")
 
 
 def centro_de_masa():
-    """vista en planta horizontal con el centroide del modelo marcado"""
+    """vista en planta con los dos centros de masa: placa sola y conjunto armado"""
     K2 = 2.30                     # px por mm
     piv = (150.0, 235.0)
-    U_CM = 32.9                   # medido del STEP (placa sola)
+    U_CM = 32.9                   # centroide de la placa sola (STEP)
+    U_CM2 = D_CM                  # centro de masa del conjunto (24.5 mm)
 
     def Q(u, v):
         return piv[0] + u * K2, piv[1] + v * K2
@@ -211,7 +216,7 @@ def centro_de_masa():
     o = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 470" font-family="sans-serif" font-size="13">',
          DEFS,
          '  <rect x="1" y="1" width="678" height="468" rx="12" fill="#ffffff" stroke="#dee2e6" stroke-width="1.5"/>',
-         '  <text x="25" y="32" fill="#212529" font-size="16" font-weight="bold">Centro de masa de la placa (vista en planta)</text>',
+         '  <text x="25" y="32" fill="#212529" font-size="16" font-weight="bold">Centros de masa: placa sola y conjunto armado</text>',
          '  <line x1="25" y1="44" x2="655" y2="44" stroke="#e9ecef" stroke-width="1.5"/>']
 
     # placa horizontal
@@ -232,6 +237,7 @@ def centro_de_masa():
     # centros: pivote y CM
     cxp, cyp = Q(0, 0)
     cxm, cym = Q(U_CM, 0)
+    cx2, cy2 = Q(U_CM2, 0)
     o.append('  <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="#868e96" stroke-width="1" stroke-dasharray="5 4"/>'
              % (cxp, cyp - 34, cxm, cym - 34))
     o.append('  <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="#adb5bd" stroke-width="1"/>' % (cxp, cyp - 44, cxp, cyp + 46))
@@ -243,17 +249,28 @@ def centro_de_masa():
     o.append('    <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f"/>' % (cxm - 7, cym + 7, cxm + 7, cym - 7))
     o.append('  </g>')
     o.append('  <circle cx="%.1f" cy="%.1f" r="9" fill="none" stroke="#2b8a3e" stroke-width="1.4"/>' % (cxm, cym))
+    # mg va en el centro de masa del conjunto, no en el de la placa
     o.append('  <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="#2b8a3e" stroke-width="2.6" marker-end="url(#ag)"/>'
-             % (cxm, cym + 9, cxm, cym + 105))
-    o.append('  <text x="%.1f" y="%.1f" fill="#2b8a3e" font-size="14" font-style="italic">m g</text>' % (cxm + 9, cym + 101))
+             % (cx2, cy2 + 8, cx2, cy2 + 105))
+    o.append('  <text x="%.1f" y="%.1f" fill="#2b8a3e" font-size="14" font-style="italic">m g</text>' % (cx2 + 9, cy2 + 101))
 
     # cota pivote -> CM
     o.append('  <g stroke="#868e96" stroke-width="1.3">')
     o.append('    <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" marker-start="url(#agr)" marker-end="url(#agr)"/>'
              % (cxp, cyp - 34, cxm, cym - 34))
     o.append('  </g>')
-    o.append('  <text x="%.1f" y="%.1f" fill="#495057" font-size="13" text-anchor="middle">32.9 mm</text>'
-             % ((cxp + cxm) / 2, cyp - 41))
+    o.append('  <text x="%.1f" y="%.1f" fill="#495057" font-size="12" text-anchor="middle">%.1f mm (placa)</text>'
+             % ((cxp + cxm) / 2, cyp - 41, U_CM))
+
+    # segundo marcador: conjunto armado
+    o.append('  <circle cx="%.1f" cy="%.1f" r="6" fill="#e8590c" stroke="#a63d00" stroke-width="1.2"/>' % (cx2, cy2))
+    o.append('  <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="#adb5bd" stroke-width="1"/>' % (cx2, cy2 + 6, cx2, cy2 + 52))
+    o.append('  <g stroke="#e8590c" stroke-width="1.2">')
+    o.append('    <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" marker-start="url(#ao)" marker-end="url(#ao)"/>'
+             % (cxp, cyp + 40, cx2, cy2 + 40))
+    o.append('  </g>')
+    o.append('  <text x="%.1f" y="%.1f" fill="#e8590c" font-size="12" text-anchor="middle">%.1f mm (conjunto)</text>'
+             % ((cxp + cx2) / 2 + 10, cyp + 74, U_CM2))
 
     # resto de cotas del brazo
     x0, _ = Q(-L_CORTO, 0)
@@ -272,7 +289,7 @@ def centro_de_masa():
     o.append('  <text x="%.1f" y="%.1f" fill="#2b8a3e" font-size="12" text-anchor="middle">centroide</text>' % (cxm, cym - 56))
 
     o.append('</svg>')
-    (VAULT / "centro-de-masa.svg").write_text("\n".join(o) + "\n", encoding="utf-8")
+    (IMG / "centro-de-masa.svg").write_text("\n".join(o) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
