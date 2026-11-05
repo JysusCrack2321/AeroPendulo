@@ -195,7 +195,88 @@ def planta():
     (VAULT / "planta.svg").write_text("\n".join(o) + "\n", encoding="utf-8")
 
 
+def centro_de_masa():
+    """vista en planta horizontal con el centroide del modelo marcado"""
+    K2 = 2.30                     # px por mm
+    piv = (150.0, 235.0)
+    U_CM = 32.9                   # medido del STEP (placa sola)
+
+    def Q(u, v):
+        return piv[0] + u * K2, piv[1] + v * K2
+
+    def pts(lista):
+        return " ".join("%.1f,%.1f" % Q(u, v) for u, v in lista)
+
+    w = ANCHO / 2
+    o = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 470" font-family="sans-serif" font-size="13">',
+         DEFS,
+         '  <rect x="1" y="1" width="678" height="468" rx="12" fill="#ffffff" stroke="#dee2e6" stroke-width="1.5"/>',
+         '  <text x="25" y="32" fill="#212529" font-size="16" font-weight="bold">Centro de masa de la placa (vista en planta)</text>',
+         '  <line x1="25" y1="44" x2="655" y2="44" stroke="#e9ecef" stroke-width="1.5"/>']
+
+    # placa horizontal
+    o.append('  <polygon points="%s" fill="#495057" stroke="#343a40" stroke-width="1.8"/>' % pts(
+        [(-L_CORTO, 0), (-L_CORTO + 7, -3.0), (-L_CORTO + 9, -w), (L_LARGO - 14, -w),
+         (L_LARGO - 3, -2.4), (L_LARGO, 0), (L_LARGO - 3, 2.4), (L_LARGO - 14, w),
+         (-L_CORTO + 9, w), (-L_CORTO + 7, 3.0)]))
+
+    # buje del pivote
+    o.append('  <circle cx="%.1f" cy="%.1f" r="%.1f" fill="#868e96" stroke="#343a40" stroke-width="1.6"/>'
+             % (piv[0], piv[1], BUJE_D / 2 * K2))
+    for du, dv in ((8, 8), (8, -8), (-8, 8), (-8, -8)):
+        x, y = Q(du, dv)
+        o.append('  <circle cx="%.1f" cy="%.1f" r="5" fill="#f1f3f5" stroke="#343a40" stroke-width="1.2"/>' % (x, y))
+    o.append('  <circle cx="%.1f" cy="%.1f" r="13" fill="#ffffff" stroke="#1c7ed6" stroke-width="3"/>' % piv)
+    o.append('  <circle cx="%.1f" cy="%.1f" r="3" fill="#1c7ed6"/>' % piv)
+
+    # centros: pivote y CM
+    cxp, cyp = Q(0, 0)
+    cxm, cym = Q(U_CM, 0)
+    o.append('  <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="#868e96" stroke-width="1" stroke-dasharray="5 4"/>'
+             % (cxp, cyp - 34, cxm, cym - 34))
+    o.append('  <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="#adb5bd" stroke-width="1"/>' % (cxp, cyp - 44, cxp, cyp + 46))
+    o.append('  <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="#adb5bd" stroke-width="1"/>' % (cxm, cym - 44, cxm, cym + 40))
+
+    # marca del CM
+    o.append('  <g stroke="#2b8a3e" stroke-width="1.4">')
+    o.append('    <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f"/>' % (cxm - 7, cym - 7, cxm + 7, cym + 7))
+    o.append('    <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f"/>' % (cxm - 7, cym + 7, cxm + 7, cym - 7))
+    o.append('  </g>')
+    o.append('  <circle cx="%.1f" cy="%.1f" r="9" fill="none" stroke="#2b8a3e" stroke-width="1.4"/>' % (cxm, cym))
+    o.append('  <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="#2b8a3e" stroke-width="2.6" marker-end="url(#ag)"/>'
+             % (cxm, cym + 9, cxm, cym + 105))
+    o.append('  <text x="%.1f" y="%.1f" fill="#2b8a3e" font-size="14" font-style="italic">m g</text>' % (cxm + 9, cym + 101))
+
+    # cota pivote -> CM
+    o.append('  <g stroke="#868e96" stroke-width="1.3">')
+    o.append('    <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" marker-start="url(#agr)" marker-end="url(#agr)"/>'
+             % (cxp, cyp - 34, cxm, cym - 34))
+    o.append('  </g>')
+    o.append('  <text x="%.1f" y="%.1f" fill="#495057" font-size="13" text-anchor="middle">32.9 mm</text>'
+             % ((cxp + cxm) / 2, cyp - 41))
+
+    # resto de cotas del brazo
+    x0, _ = Q(-L_CORTO, 0)
+    x1, _ = Q(L_LARGO, 0)
+    o.append('  <g stroke="#ced4da" stroke-width="1.2">')
+    o.append('    <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f"/>' % (x0, 320, x1, 320))
+    o.append('    <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f"/>' % (x0, 312, x0, 328))
+    o.append('    <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f"/>' % (x1, 312, x1, 328))
+    o.append('    <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f"/>' % (cxp, 312, cxp, 328))
+    o.append('  </g>')
+    o.append('  <text x="%.1f" y="%.1f" fill="#868e96" font-size="12" text-anchor="middle">55 mm</text>' % ((x0 + cxp) / 2, 340))
+    o.append('  <text x="%.1f" y="%.1f" fill="#868e96" font-size="12" text-anchor="middle">145 mm</text>' % ((cxp + x1) / 2, 340))
+
+    # etiquetas
+    o.append('  <text x="%.1f" y="%.1f" fill="#1c7ed6" font-size="12" text-anchor="middle">pivote</text>' % (cxp, cyp - 56))
+    o.append('  <text x="%.1f" y="%.1f" fill="#2b8a3e" font-size="12" text-anchor="middle">centroide</text>' % (cxm, cym - 56))
+
+    o.append('</svg>')
+    (VAULT / "centro-de-masa.svg").write_text("\n".join(o) + "\n", encoding="utf-8")
+
+
 if __name__ == "__main__":
     cuerpo_libre()
     planta()
+    centro_de_masa()
     print("escritos")
