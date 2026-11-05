@@ -64,12 +64,11 @@ def construir():
     brida_pl = colocar(brida, BRIDA_ROT_EJE, BRIDA_ROT_ANG, BRIDA_POS, "arriba")
     mpu_pl = colocar(mpu, MPU_ROT_EJE, MPU_ROT_ANG, MPU_POS, "abajo")
 
+    # el cilindro nace en +Z desde el origen: lo rotamos y lo llevamos a su sitio
+    pl_motor = FreeCAD.Placement(FreeCAD.Vector(MOT_POS[0] - MOT_L / 2, MOT_POS[1], MOT_POS[2]),
+                                 FreeCAD.Rotation(FreeCAD.Vector(*MOT_EJE), MOT_ANG))
     motor = Part.makeCylinder(MOT_R, MOT_L)
-    motor.Placement = FreeCAD.Placement(FreeCAD.Vector(MOT_POS[0] - MOT_L / 2, MOT_POS[1], MOT_POS[2]),
-                                        FreeCAD.Rotation(FreeCAD.Vector(*MOT_EJE), MOT_ANG))
-    motor = motor.copy()
-    motor.transformShape(motor.Placement.toMatrix())
-    motor.Placement = FreeCAD.Placement()
+    motor.transformShape(pl_motor.toMatrix())
 
     tr = [tornillo(x, y, MPU_POS[2] + 2.0) for (x, y) in agujeros_mpu(mpu_pl)]
     tr += [tornillo(x, y, 4.0) for (x, y) in AGUJEROS_BRIDA]
