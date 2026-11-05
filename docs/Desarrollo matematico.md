@@ -10,13 +10,13 @@ El brazo gira alrededor del pivote. Se mide el ángulo $\theta$ desde la horizon
 positivo hacia arriba (como en el diagrama), y el empuje $F$ actúa en la punta,
 perpendicular al brazo, a distancia $R$.
 
-| símbolo | significado                              | valor medido                          |
-| ------- | ---------------------------------------- | ------------------------------------- |
-| $R$     | pivote → punto de aplicación del empuje  | $145\ \text{mm} = 0.145\ \text{m}$   |
-| $d$     | pivote → centro de masa del conjunto     | $24.5\ \text{mm}$                    |
-| $I$     | momento de inercia respecto al pivote    | $9.45\times10^{-5}\ \text{kg·m}^2$   |
-| $m$     | masa del conjunto ensamblado             | $31.7\ \text{g}$                     |
-| $b$     | fricción viscosa                         | por identificar                       |
+| símbolo | significado                             | valor medido                       |
+| ------- | --------------------------------------- | ---------------------------------- |
+| $R$     | pivote → punto de aplicación del empuje | $145\ \text{mm} = 0.145\ \text{m}$ |
+| $d$     | pivote → centro de masa del conjunto    | $24.5\ \text{mm}$                  |
+| $I$     | momento de inercia respecto al pivote   | $9.45\times10^{-5}\ \text{kg·m}^2$ |
+| $m$     | masa del conjunto ensamblado            | $31.7\ \text{g}$                   |
+| $b$     | fricción viscosa                        | por identificar                    |
 
 ### Datos del conjunto (modelo 3D + pesada)
 
