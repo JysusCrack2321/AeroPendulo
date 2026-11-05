@@ -1,80 +1,51 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 470" font-family="sans-serif" font-size="13">
   <defs>
-    <marker id="arrow-orange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M0,1 L10,5 L0,9 z" fill="#e8590c"/>
-    </marker>
+    <marker id="ab" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L10,5 L0,9 z" fill="#1c7ed6"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L10,5 L0,9 z" fill="#2b8a3e"/></marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,1 L10,5 L0,9 z" fill="#e8590c"/></marker>
+    <marker id="agr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M0,1 L10,5 L0,9 z" fill="#868e96"/></marker>
   </defs>
 
   <rect x="1" y="1" width="678" height="468" rx="12" fill="#ffffff" stroke="#dee2e6" stroke-width="1.5"/>
-
-  <text x="25" y="32" fill="#212529" font-size="16" font-weight="bold">Planta: aeropéndulo (brazo con motor-hélice en el extremo)</text>
+  <text x="25" y="32" fill="#212529" font-size="16" font-weight="bold">Planta: aeropendulo (brazo de 200 mm, motor-helice en la punta)</text>
   <line x1="25" y1="44" x2="655" y2="44" stroke="#e9ecef" stroke-width="1.5"/>
-
-  <!-- base -->
-  <rect x="175" y="400" width="230" height="16" rx="3" fill="#e9ecef" stroke="#ced4da" stroke-width="1.5"/>
+  <rect x="150" y="404" width="230" height="16" rx="3" fill="#e9ecef" stroke="#ced4da" stroke-width="1.5"/>
   <g stroke="#adb5bd" stroke-width="1.5">
-    <line x1="190" y1="416" x2="180" y2="426"/>
-    <line x1="212" y1="416" x2="202" y2="426"/>
-    <line x1="234" y1="416" x2="224" y2="426"/>
-    <line x1="256" y1="416" x2="246" y2="426"/>
-    <line x1="278" y1="416" x2="268" y2="426"/>
-    <line x1="300" y1="416" x2="290" y2="426"/>
-    <line x1="322" y1="416" x2="312" y2="426"/>
-    <line x1="344" y1="416" x2="334" y2="426"/>
-    <line x1="366" y1="416" x2="356" y2="426"/>
-    <line x1="388" y1="416" x2="378" y2="426"/>
+    <line x1="165" y1="420" x2="155" y2="430"/>
+    <line x1="187" y1="420" x2="177" y2="430"/>
+    <line x1="209" y1="420" x2="199" y2="430"/>
+    <line x1="231" y1="420" x2="221" y2="430"/>
+    <line x1="253" y1="420" x2="243" y2="430"/>
+    <line x1="275" y1="420" x2="265" y2="430"/>
+    <line x1="297" y1="420" x2="287" y2="430"/>
+    <line x1="319" y1="420" x2="309" y2="430"/>
+    <line x1="341" y1="420" x2="331" y2="430"/>
+    <line x1="363" y1="420" x2="353" y2="430"/>
   </g>
-  <text x="215" y="446" fill="#495057" font-size="12">base</text>
-
-  <!-- columna -->
-  <path d="M205,400 L250,234 L320,234 L365,400 Z" fill="#f1f3f5" stroke="#495057" stroke-width="1.8"/>
-  <line x1="368" y1="336" x2="350" y2="336" stroke="#adb5bd" stroke-width="1.2"/>
-  <text x="372" y="340" fill="#495057" font-size="12">columna</text>
-
-  <!-- referencia horizontal -->
-  <line x1="285" y1="234" x2="470" y2="234" stroke="#adb5bd" stroke-width="1.2" stroke-dasharray="6 4"/>
-
-  <!-- brazo -->
-  <line x1="285" y1="234" x2="433" y2="141" stroke="#343a40" stroke-width="9" stroke-linecap="round"/>
-
-  <!-- angulo -->
-  <path d="M340,234 A55,55 0 0 0 331.6,204.9" fill="none" stroke="#1c7ed6" stroke-width="1.8"/>
-  <text x="345" y="222" fill="#1c7ed6" font-size="15" font-style="italic">&#952;</text>
-
-  <!-- cota L -->
-  <g stroke="#868e96" stroke-width="1.2" stroke-dasharray="5 4">
-    <line x1="273" y1="215" x2="421" y2="122"/>
+  <path d="M204,404 L237,272 L263,272 L296,404 Z" fill="#f1f3f5" stroke="#495057" stroke-width="1.8"/>
+  <text x="208" y="446" fill="#495057" font-size="12">base</text>
+  <line x1="250" y1="250" x2="580" y2="250" stroke="#adb5bd" stroke-width="1.2" stroke-dasharray="7 5"/>
+  <polygon points="180.0,293.7 186.6,284.3 187.5,280.2 412.7,139.5 428.7,134.1 434.5,134.7 432.5,140.2 420.6,152.2 195.5,292.9 191.3,292.0" fill="#495057" stroke="#343a40" stroke-width="1.6"/>
+  <circle cx="250.0" cy="250.0" r="20.2" fill="#868e96" stroke="#343a40" stroke-width="1.6"/>
+  <circle cx="266.5" cy="253.8" r="3.4" fill="#f1f3f5" stroke="#343a40" stroke-width="1.1"/>
+  <circle cx="253.8" cy="233.5" r="3.4" fill="#f1f3f5" stroke="#343a40" stroke-width="1.1"/>
+  <circle cx="246.2" cy="266.5" r="3.4" fill="#f1f3f5" stroke="#343a40" stroke-width="1.1"/>
+  <circle cx="233.5" cy="246.2" r="3.4" fill="#f1f3f5" stroke="#343a40" stroke-width="1.1"/>
+  <circle cx="250.0" cy="250.0" r="9" fill="#ffffff" stroke="#1c7ed6" stroke-width="3"/>
+  <circle cx="250.0" cy="250.0" r="2.4" fill="#1c7ed6"/>
+  <polyline points="345.0,250.0 344.9,246.2 344.7,242.4 344.3,238.7 343.8,234.9 343.1,231.2 342.3,227.5 341.3,223.8 340.2,220.2 338.9,216.6 337.5,213.1 336.0,209.6 334.3,206.2 332.5,202.9 330.6,199.7" fill="none" stroke="#1c7ed6" stroke-width="1.6"/>
+  <text x="343" y="228" fill="#1c7ed6" font-size="16" font-style="italic">&#952;</text>
+  <g transform="rotate(-32.0, 434.5, 134.7)">
+    <rect x="400.5" y="124.7" width="30" height="20" rx="3" fill="#ffe8cc" stroke="#e8590c" stroke-width="2"/>
+    <ellipse cx="439.5" cy="134.7" rx="3.2" ry="22" fill="#ffa94d" fill-opacity="0.9" stroke="#e8590c" stroke-width="1.4"/>
   </g>
-  <g stroke="#868e96" stroke-width="1.4">
-    <line x1="268" y1="221" x2="278" y2="209"/>
-    <line x1="416" y1="128" x2="426" y2="116"/>
-  </g>
-  <text x="330" y="158" fill="#868e96" font-size="15" font-style="italic">L</text>
-
-  <!-- pivote -->
-  <circle cx="285" cy="234" r="10" fill="#ffffff" stroke="#1c7ed6" stroke-width="3.5"/>
-  <circle cx="285" cy="234" r="2.5" fill="#1c7ed6"/>
-  <line x1="205" y1="210" x2="277" y2="231" stroke="#1c7ed6" stroke-width="1.1"/>
-  <text x="150" y="205" fill="#1c7ed6" font-size="12">pivote</text>
-
-  <!-- motor -->
-  <g transform="rotate(-32, 443.6, 134.9)">
-    <rect x="421.6" y="118.9" width="44" height="32" rx="4" fill="#ffe8cc" stroke="#e8590c" stroke-width="2"/>
-    <line x1="430" y1="134.9" x2="457" y2="134.9" stroke="#e8590c" stroke-width="1.2" stroke-dasharray="3 3"/>
-  </g>
-  <line x1="468" y1="170" x2="452" y2="145" stroke="#e8590c" stroke-width="1.1"/>
-  <text x="472" y="176" fill="#e8590c" font-size="12">motor DC</text>
-
-  <!-- helice -->
-  <g transform="rotate(-32, 469, 119)">
-    <ellipse cx="469" cy="119" rx="5" ry="30" fill="#ffa94d" fill-opacity="0.85" stroke="#e8590c" stroke-width="1.5"/>
-  </g>
-  <circle cx="469" cy="119" r="4" fill="#e8590c"/>
-  <line x1="490" y1="106" x2="477" y2="112" stroke="#e8590c" stroke-width="1.1"/>
-  <text x="494" y="103" fill="#e8590c" font-size="12">hélice</text>
-
-  <!-- empuje -->
-  <line x1="469" y1="119" x2="437" y2="68" stroke="#e8590c" stroke-width="3" marker-end="url(#arrow-orange)"/>
-  <text x="452" y="62" fill="#e8590c" font-size="15" font-style="italic">F</text>
-  <text x="468" y="62" fill="#e8590c" font-size="11">empuje</text>
+  <circle cx="434.5" cy="134.7" r="3.4" fill="#e8590c"/>
+  <line x1="454.8" y1="122.0" x2="415.1" y2="58.4" stroke="#e8590c" stroke-width="3" marker-end="url(#ao)"/>
+  <text x="397.1" y="60.4" fill="#e8590c" font-size="15" font-style="italic">F</text>
+  <text x="393.1" y="74.4" fill="#e8590c" font-size="11" text-anchor="end">empuje</text>
+  <text x="466.8" y="144.0" fill="#e8590c" font-size="12">motor + helice</text>
 </svg>
