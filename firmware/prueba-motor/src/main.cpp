@@ -5,9 +5,9 @@ constexpr uint8_t AnalogPin = 34; // GPIO34: AS5600 OUT
 constexpr uint8_t Mpu6050Address = 0x68;
 constexpr uint32_t Period = 50;
 constexpr uint8_t pwmPin = 25;        // GPIO25
-constexpr uint8_t DUTY_MAX = 120;     // tope del barrido (120/255 = 47%)
+constexpr uint8_t DUTY_MAX = 240;     // tope del barrido (240/255 = 94%)
 constexpr uint8_t DUTY_PASO = 20;     // cuanto sube cada paso
-constexpr uint32_t probeTime = 2000;  // cada cuanto sube el duty
+constexpr uint32_t probeTime = 5000;  // cada cuanto sube (5 s para que se asiente)
 uint8_t pwmDuty = 0;                  // duty actual 0-255
 bool barrido = true;                  // se apaga al mandar un valor por serial
 int offset = 0;

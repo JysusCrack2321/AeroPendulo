@@ -103,11 +103,12 @@ def esperar_enter(prompt: str) -> None:
 # ----------------------------------------------------------------------------
 # grabacion
 # ----------------------------------------------------------------------------
-def grabar(puerto: str, baud: int, salida: Path, graficar: bool) -> Path:
+def grabar(puerto: str, baud: int, salida: Path, graficar: bool, nombre: str | None = None) -> Path:
     salida.mkdir(parents=True, exist_ok=True)
     sello = dt.datetime.now().strftime("%Y%m%d_%H%M%S")
-    ancho = salida / f"registro_{sello}.csv"
-    crudo = salida / f"registro_{sello}_crudo.csv"
+    base = nombre if nombre else f"registro_{sello}"
+    ancho = salida / f"{base}.csv"
+    crudo = salida / f"{base}_crudo.csv"
 
     cola: queue.Queue[str] = queue.Queue()
     lector = Lector(puerto, baud, cola)
@@ -246,11 +247,12 @@ def main() -> None:
     ap.add_argument("-b", "--baud", type=int, default=115200)
     ap.add_argument("-s", "--salida", default=str(Path(__file__).parent / "datos"))
     ap.add_argument("-g", "--grafico", action="store_true", help="ventana con grafica en vivo")
+    ap.add_argument("-n", "--nombre", help="nombre base del csv (sin extension)")
     args = ap.parse_args()
 
     puerto = elegir_puerto(args.puerto)
     print("puerto:", puerto, "a", args.baud, "baudios")
-    grabar(puerto, args.baud, Path(args.salida), args.grafico)
+    grabar(puerto, args.baud, Path(args.salida), args.grafico, args.nombre)
 
 
 if __name__ == "__main__":
