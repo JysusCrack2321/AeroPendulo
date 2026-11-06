@@ -6,7 +6,7 @@ constexpr uint8_t Mpu6050Address = 0x68;
 constexpr uint32_t Period = 50;
 int offset = 0;
 uint32_t lastRead = 0;
-ulong degrees = 0;
+long degrees = 0;
 
 void setup() {
   Serial.begin(115200);
