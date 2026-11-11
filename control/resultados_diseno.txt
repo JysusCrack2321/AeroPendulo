@@ -1,0 +1,54 @@
+Planta: mgd/I = 93.8 1/s^2, b/I = 0.90 1/s, kb lineal = 74.1 grados/s^2 por duty
+  th0 =   0: u0 =  15.0 duty, k(th0) =  88.6, polos de G: [-0.45+9.67i -0.45-9.67i]
+  th0 =  45: u0 =  59.1 duty, k(th0) =  83.5, polos de G: [-0.45+8.13i -0.45-8.13i]
+  th0 =  90: u0 =  78.3 duty, k(th0) =  81.2, polos de G: [0 -0.9]
+  th0 = 120: u0 =  69.4 duty, k(th0) =  82.3, polos de G: [-7.31 6.41]
+  th0 = 135: u0 =  59.1 duty, k(th0) =  83.5, polos de G: [-8.61 7.71]
+  th0 = 150: u0 =  45.9 duty, k(th0) =  85.0, polos de G: [-9.47 8.57]
+
+Lugar de las raices: C(s) = K (s + 1.4)(s + 3.2) / (s (0.02 s + 1)), K = 0.22
+  desarrollando: Kd + Kp Tf = K,  Kp + Ki Tf = K (z1 + z2),  Ki = K z1 z2
+  -> Kp = 0.992, Ki = 0.986, Kd = 0.200  (se redondean a 1.0, 1.0, 0.20)
+  th0 =  45: zeta minimo con K = 0.15/0.22/0.30/0.40/0.60: [0.6 0.82 0.67 0.57 0.46]
+  th0 =  90: zeta minimo con K = 0.15/0.22/0.30/0.40/0.60: [1 0.87 0.72 0.61 0.48]
+  th0 = 120: zeta minimo con K = 0.15/0.22/0.30/0.40/0.60: [0.1 0.44 0.63 0.62 0.49]
+  th0 = 135: zeta minimo con K = 0.15/0.22/0.30/0.40/0.60: [-0.24 0.18 0.44 0.61 0.49]
+  rango estable de K: en 90° 0.003..3.16, en 135° 0.189..3.16, en 150° 0.222..3.16
+  con K = 0.22 el lazo es estable hasta 145 grados
+
+PID: Kp = 1.00, Ki = 1.00, Kd = 0.20, Tf = 0.020 s (polo del filtro en 50 rad/s), beta = 0.0, Ts = 10 ms
+
+Lazo abierto C G:
+   th0   MF[°]  wc[rad/s]  MG sup[dB]  MG inf[dB]   polo dominante
+     0    57.0     22.22         Inf        -Inf   -0.51
+    45    57.8     20.46         Inf        -Inf   -0.60
+    90    58.7     17.23         Inf       -44.4   -1.38
+   120    58.6     14.64         Inf        -4.2   -1.00+2.04i
+   135    58.3     13.36         Inf        -1.6   -0.41+2.18i
+   150     6.6      2.48         Inf        -0.1   -0.02+2.18i
+  escalon lineal en  45°, beta 0: Mp =   0.0 %, ts = 6.45 s, u pico/escalon = 0.8 duty/grado
+  escalon lineal en  45°, beta 1: Mp =   0.0 %, ts = 5.05 s, u pico/escalon = 1.0 duty/grado
+  escalon lineal en  90°, beta 0: Mp =   0.0 %, ts = 3.16 s, u pico/escalon = 0.0 duty/grado
+  escalon lineal en  90°, beta 1: Mp =  13.9 %, ts = 2.46 s, u pico/escalon = 1.0 duty/grado
+  escalon lineal en 120°, beta 0: Mp =  21.3 %, ts = 3.73 s, u pico/escalon = 0.7 duty/grado
+  escalon lineal en 120°, beta 1: Mp =  93.9 %, ts = 4.48 s, u pico/escalon = 1.2 duty/grado
+  escalon lineal en 135°, beta 0: Mp =  53.1 %, ts = 9.40 s, u pico/escalon = 1.3 duty/grado
+  escalon lineal en 135°, beta 1: Mp = 152.7 %, ts = 8.96 s, u pico/escalon = 2.2 duty/grado
+  escalon lineal en 150°, beta 0: Mp =   8.7 %, ts = 9.94 s, u pico/escalon = 1.9 duty/grado
+  escalon lineal en 150°, beta 1: Mp =  47.8 %, ts = 9.99 s, u pico/escalon = 3.3 duty/grado
+
+Nyquist (P = polos inestables de lazo abierto, Z = de lazo cerrado):
+  th0 =  45: P = 0, Z = 0
+  th0 = 135: P = 1, Z = 0
+
+Sensibilidades:
+  th0 =  45: Ms = 1.28 (2.2 dB), Mt = 1.14
+  th0 =  90: Ms = 1.27 (2.1 dB), Mt = 1.20
+  th0 = 120: Ms = 1.63 (4.3 dB), Mt = 2.62
+  th0 = 135: Ms = 5.12 (14.2 dB), Mt = 6.12
+
+Discreto frente a continuo (escalon lineal, beta = 1):
+  th0 =  90: Mp continuo 18.5 %, discreto 21.8 %
+  th0 = 120: Mp continuo 83.2 %, discreto 83.8 %
+
+Monte Carlo: 200 plantas, 0 inestables, Ms mediana 1.26, max 14.80

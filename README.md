@@ -6,6 +6,8 @@ a distancia `R` del pivote genera el par de control; el peso `mg` actúa en el C
 ## Estructura
 
     firmware/TDC/      ESP32 (PlatformIO): AS5600 + MPU6050 por serial a 20 Hz
+    firmware/control-pid/  ESP32: PID con secuencia de escalones (D25 + AS5600) + MPU6050 de medicion
+    control/           identificacion, diseno, simulacion y graficas del PID (MATLAB)
     procesamiento/     captura y carga de datos (Python / MATLAB) + datos/ CSV
     docs/              notas del proyecto (enlace a la carpeta del vault Obsidian,
                        que es la fuente de verdad; Obsidian sigue siendo el maestro)

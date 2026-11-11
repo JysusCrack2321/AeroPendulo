@@ -1,0 +1,5 @@
+Ensayos del 6 nov 2026 que no entran en el informe:
+- registro_lastre_barrido_20261106.csv y pid_escalones_20261106_115009.csv: encoder a 2.52 V colgando
+  (por encima de ~2.45 V el ADC del ESP32 se aplana y a ~85 grados el AS5600 salta de 3.3 a 0 V).
+- pid_escalones150_*: secuencias cortadas por vuelta completa (sensor mal orientado, roce mecanico
+  cerca de 90 grados o ganancias programadas que luego se quitaron).
